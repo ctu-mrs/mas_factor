@@ -40,7 +40,7 @@ void PreintegratedMasMeasurements::resetIntegration() {
 //------------------------------------------------------------------------------
 
 /*//{ integrateMeasurement() */
-void PreintegratedMasMeasurements::integrateMeasurement(const Vector& measuredMass, double dt) {
+void PreintegratedMasMeasurements::integrateMeasurement(const Vector& measuredMas, double dt) {
 
   Vector3 measuredForce(0, 0, 0);
   Vector3 measuredAcc(0, 0, 0);
@@ -52,8 +52,8 @@ void PreintegratedMasMeasurements::integrateMeasurement(const Vector& measuredMa
 
   std::vector<Vector3> rotor_p = p.getRotorPositions();
 
-  for (int i = 0; i < measuredMass.size(); i++) {
-    Vector3 motor_thrust = p.motorConstant * std::pow(measuredMass(i), 2) * Vector3(0, 0, 1);  // body frame
+  for (int i = 0; i < measuredMas.size(); i++) {
+    Vector3 motor_thrust = p.motorConstant * std::pow(measuredMas(i), 2) * Vector3(0, 0, 1);  // body frame
     measuredForce += motor_thrust;
     measuredTorqueDrag += p.rotorDirs[i] * p.momentConstant * motor_thrust;  // body frame, causes yaw
     measuredTorqueThrust += rotor_p[i].cross(motor_thrust);                    // causes roll/pitch
@@ -64,7 +64,7 @@ void PreintegratedMasMeasurements::integrateMeasurement(const Vector& measuredMa
   /* measuredAlpha = p.getInertialMatrix().inverse() * (measuredTorqueDrag + measuredTorqueThrust); */
 
   if (is_before_takeoff_) {
-    std:: cout << "measuredMass: " << std::endl << measuredMass << std::endl;
+    std:: cout << "measuredMas: " << std::endl << measuredMas << std::endl;
     std:: cout << "measured_alpha: " << std::endl << measuredAlpha << std::endl;
     std:: cout << "measured_acc: " << std::endl << measuredAcc << std::endl;
     const double a_norm = measuredAcc.norm();
@@ -79,7 +79,7 @@ void PreintegratedMasMeasurements::integrateMeasurement(const Vector& measuredMa
   }
 
   if (measuredAlpha.norm() > 10) {
-    std:: cout << "measuredMass: " << std::endl << measuredMass << std::endl;
+    std:: cout << "measuredMas: " << std::endl << measuredMas << std::endl;
     std:: cout << "measured_alpha: " << std::endl << measuredAlpha << std::endl;
     std:: cout << "last_alpha: " << std::endl << last_alpha_ << std::endl;
     std:: cout << "measured_acc: " << std::endl << measuredAcc << std::endl;
@@ -194,7 +194,7 @@ void PreintegratedMasMeasurements::integrateMeasurement(const Vector3& measuredA
 // MasFactor methods
 //------------------------------------------------------------------------------
 
-/*//{ MasFactor methods*/
+/*//{ MasFactor methods */
 /*//{ MasFactor() */
 MasFactor::MasFactor(Key pose_i, Key lin_vel_i, Key ang_vel_i, Key pose_j, Key lin_vel_j, Key ang_vel_j, Key bias,
                                    const PreintegratedMasMeasurements& pim)
