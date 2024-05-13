@@ -53,14 +53,14 @@ Vector12 MasPreintegration::UpdatePreintegrated(const Vector3& a_body, const Vec
 
   // Calculate exact mean propagation
   Matrix3       w_tangent_H_theta, alpha_tangent_H_theta, invH;
-  const Vector3 w_tangent =  // angular velocity mapped back to tangent space
-      local.applyInvDexp(omega, A ? &w_tangent_H_theta : 0, C ? &invH : 0);
+  /* const Vector3 w_tangent =  // angular velocity mapped back to tangent space */
+  /*     local.applyInvDexp(omega, A ? &w_tangent_H_theta : 0, C ? &invH : 0); */
 
   const Rot3 R(local.expmap());  // nRb: rotation of body in nav frame
 
-  const Vector3 alpha_nav     = R * alpha_body;
+  /* const Vector3 alpha_nav     = R * alpha_body; */
   const Vector3 alpha_tangent =  // angular acceleration mapped back to tangent space
-      local.applyInvDexp(alpha_nav, A ? &alpha_tangent_H_theta : 0, C ? &invH : 0);
+      local.applyInvDexp(alpha_body, A ? &alpha_tangent_H_theta : 0, C ? &invH : 0);
 
   const Vector3 a_nav = R * a_body;
   const double  dt22  = 0.5 * dt * dt;
@@ -68,7 +68,8 @@ Vector12 MasPreintegration::UpdatePreintegrated(const Vector3& a_body, const Vec
   Vector12 preintegratedPlus;
   preintegratedPlus <<  // new preintegrated vector:
       /* theta + w_tangent * dt,                   // theta */
-      theta + w_tangent * dt + alpha_tangent * dt22,  // theta
+      /* theta + w_tangent * dt + alpha_tangent * dt22,  // theta */
+      theta + omega * dt + alpha_tangent * dt22,  // theta
       position + velocity * dt + a_nav * dt22,        // position
       velocity + a_nav * dt,                          // velocity
       omega + alpha_tangent * dt;                     // omega
@@ -80,7 +81,8 @@ Vector12 MasPreintegration::UpdatePreintegrated(const Vector3& a_body, const Vec
     const Matrix3 alpha_nav_H_theta = R.matrix() * skewSymmetric(-alpha_body) * local.dexp();
 
     A->setIdentity();
-    A->block<3, 3>(0, 0).noalias() += alpha_tangent_H_theta * dt22;  // theta
+    /* A->block<3, 3>(0, 0).noalias() += alpha_tangent_H_theta * dt22;  // theta */
+    A->block<3, 3>(0, 0).noalias() += - 0.5 * alpha_tangent_H_theta * dt22;  // theta
     /* A->block<3, 3>(0, 0).noalias() += w_tangent_H_theta * dt;  // theta */
     A->block<3, 3>(3, 0) = a_nav_H_theta * dt22;    // position wrpt theta...
     A->block<3, 3>(3, 6) = I_3x3 * dt;              // .. and velocity
