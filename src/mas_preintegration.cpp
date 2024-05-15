@@ -52,23 +52,19 @@ Vector12 MasPreintegration::UpdatePreintegrated(const Vector3& a_body, const Vec
   so3::DexpFunctor local(theta);
 
   // Calculate exact mean propagation
-  Matrix3       w_tangent_H_theta, alpha_tangent_H_theta, invH;
-  /* const Vector3 w_tangent =  // angular velocity mapped back to tangent space */
-  /*     local.applyInvDexp(omega, A ? &w_tangent_H_theta : 0, C ? &invH : 0); */
+  Matrix3       alpha_tangent_H_theta, invH;
 
   const Rot3 R(local.expmap());  // nRb: rotation of body in nav frame
 
-  /* const Vector3 alpha_nav     = R * alpha_body; */
   const Vector3 alpha_tangent =  // angular acceleration mapped back to tangent space
       local.applyInvDexp(alpha_body, A ? &alpha_tangent_H_theta : 0, C ? &invH : 0);
+  // petrlmat: alpha_tangent_H_theta = 0.5 * skewSymmetric(alpha_body)
 
   const Vector3 a_nav = R * a_body;
   const double  dt22  = 0.5 * dt * dt;
 
   Vector12 preintegratedPlus;
   preintegratedPlus <<  // new preintegrated vector:
-      /* theta + w_tangent * dt,                   // theta */
-      /* theta + w_tangent * dt + alpha_tangent * dt22,  // theta */
       theta + omega * dt + alpha_tangent * dt22,  // theta
       position + velocity * dt + a_nav * dt22,        // position
       velocity + a_nav * dt,                          // velocity
@@ -78,16 +74,13 @@ Vector12 MasPreintegration::UpdatePreintegrated(const Vector3& a_body, const Vec
     // Exact derivative of R*a with respect to theta:
     const Matrix3 a_nav_H_theta = R.matrix() * skewSymmetric(-a_body) * local.dexp();
     // Exact derivative of R*alpha with respect to theta:
-    const Matrix3 alpha_nav_H_theta = R.matrix() * skewSymmetric(-alpha_body) * local.dexp();
 
     A->setIdentity();
-    /* A->block<3, 3>(0, 0).noalias() += alpha_tangent_H_theta * dt22;  // theta */
-    A->block<3, 3>(0, 0).noalias() += - 0.5 * alpha_tangent_H_theta * dt22;  // theta
-    /* A->block<3, 3>(0, 0).noalias() += w_tangent_H_theta * dt;  // theta */
+    A->block<3, 3>(0, 0).noalias() += 0.5 * alpha_tangent_H_theta * dt22;  // theta
     A->block<3, 3>(3, 0) = a_nav_H_theta * dt22;    // position wrpt theta...
     A->block<3, 3>(3, 6) = I_3x3 * dt;              // .. and velocity
     A->block<3, 3>(6, 0) = a_nav_H_theta * dt;      // velocity wrpt theta
-    A->block<3, 3>(9, 0) = alpha_nav_H_theta * dt;  // omega wrpt theta
+    A->block<3, 3>(9, 0) = alpha_tangent_H_theta * dt;  // omega wrpt theta
     A->block<3, 3>(0, 9) = I_3x3 * dt;              // theta wrpt omega
   }
   // Jacobian wrpt a
@@ -100,11 +93,9 @@ Vector12 MasPreintegration::UpdatePreintegrated(const Vector3& a_body, const Vec
   // Jacobian wrpt alpha
   if (C) {
     C->block<3, 3>(0, 0) = invH * dt22;
-    /* C->block<3, 3>(0, 0) = R.matrix() * dt22; */
     C->block<3, 3>(3, 0) = Z_3x3;
     C->block<3, 3>(6, 0) = Z_3x3;
     C->block<3, 3>(9, 0) = invH * dt;
-    /* C->block<3, 3>(9, 0) = R.matrix() * dt; */
   }
 
   return preintegratedPlus;
