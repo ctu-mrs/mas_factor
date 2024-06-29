@@ -11,6 +11,7 @@ struct GTSAM_EXPORT MasParams: PreintegrationParams {
   double mass; // total mass of UAV in kg
   double motorConstant; // the mapping of motor angular speed to thrust constant
   double momentConstant; // the mapping of motor angular speed to torque drag constant
+  double torqueThrustConstant; // the constant compensating incorrect mapping from thrust to torque (roll, pitch)
   int numRotors; // the total number of UAV rotors
   double bodyRadius; // the radius of UAV body (without propellers) 
   double bodyHeight; // the height of UAV body (without propellers) 
@@ -33,6 +34,7 @@ struct GTSAM_EXPORT MasParams: PreintegrationParams {
         mass(1),
         motorConstant(10),
         momentConstant(1),
+        torqueThrustConstant(1),
         numRotors(4),
         bodyRadius(0.25),
         bodyHeight(0.05),
@@ -47,11 +49,12 @@ struct GTSAM_EXPORT MasParams: PreintegrationParams {
         mass(1),
         motorConstant(10),
         momentConstant(1),
+        torqueThrustConstant(1),
         numRotors(4),
         bodyRadius(0.25),
         bodyHeight(0.05),
         rotorXYOffset(0.1812),
-        rotorZOffset(0.057),
+        rotorZOffset(0.0),
         rotorDirs(std::vector<int>{1,1,-1,-1}) {}
 
   // Default Params for a Z-down navigation frame, such as NED: gravity points along positive Z-axis
@@ -76,10 +79,12 @@ struct GTSAM_EXPORT MasParams: PreintegrationParams {
   void setMass(const double m) { mass = m; inertialMatrixComputed = false;}
   void setMotorConstant(const double c_f) { motorConstant = c_f; }
   void setMomentConstant(const double c_d) { momentConstant = c_d; }
+  void setTorqueThrustConstant(const double c_t) { torqueThrustConstant = c_t; }
   void setNumRotors(const int n) { numRotors = n; }
   void setBodyRadius(const double r) { bodyRadius = r; inertialMatrixComputed = false;}
   void setBodyHeight(const double h) { bodyHeight = h; inertialMatrixComputed = false;}
   void setRotorDirs(const std::vector<int>  dirs) { rotorDirs = dirs; }
+  void setRotorXYOffset(const double xy_offset) { rotorXYOffset = xy_offset; }
 
   const Matrix3& getAccelerationCovariance() const { return accelerationCovariance; }
   const Matrix3& getAlphaCovariance() const { return alphaCovariance; }
@@ -91,6 +96,7 @@ struct GTSAM_EXPORT MasParams: PreintegrationParams {
   double getMass() const { return mass; }
   double getMotorConstant() const { return motorConstant; }
   double getMomentConstant() const { return momentConstant; }
+  double getTorqueThrustConstant() const { return torqueThrustConstant; }
   double getNumRotors() const { return numRotors; }
   double getFrameLength() const { return bodyRadius/sqrt(2); }
   std::vector<int> getRotorDirs() const { return rotorDirs; }
@@ -121,6 +127,7 @@ protected:
     ar & BOOST_SERIALIZATION_NVP(mass);
     ar & BOOST_SERIALIZATION_NVP(motorConstant);
     ar & BOOST_SERIALIZATION_NVP(momentConstant);
+    ar & BOOST_SERIALIZATION_NVP(torqueThrustConstant);
     ar & BOOST_SERIALIZATION_NVP(numRotors);
     ar & BOOST_SERIALIZATION_NVP(bodyRadius);
     ar & BOOST_SERIALIZATION_NVP(bodyHeight);

@@ -118,7 +118,7 @@ void MasPreintegration::update(const Vector3& measuredAcc, const Vector3& measur
 
   Vector3 alpha;
   if (boost::static_pointer_cast<MasParams>(params())->getUseBiasAlphaCorrection()) {
-    alpha = biasHat_.correctAngAcc(measuredAlpha);  // TODO petrlmat: implement alpha correction
+    alpha = biasHat_.correctAngAcc(measuredAlpha);  
   } else {
     alpha = measuredAlpha;
   }

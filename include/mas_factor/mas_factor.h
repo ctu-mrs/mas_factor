@@ -99,6 +99,7 @@ public:
       const double mass,
       const double motor_constant,
       const double moment_constant,
+      const double torque_thrust_constant,
       const int num_rotors,
       const double body_radius,
       const double body_height,
@@ -206,7 +207,7 @@ public:
   /// @deprecated constructor, in the new one gravity, coriolis settings are in PreintegrationParams
   MasFactor(Key pose_i, Key lin_vel_i, Key ang_vel_i, Key pose_j, Key lin_vel_j, Key ang_vel_j, Key bias,
       const PreintegratedMeasurements& preintegratedMeasurements,
-      const Vector3& n_gravity, const Vector3& omegaCoriolis, const double mass, const double motor_constant, const double moment_constant, const int num_rotors, const double body_radius, const double body_height, const std::vector<int> rotor_dirs,
+      const Vector3& n_gravity, const Vector3& omegaCoriolis, const double mass, const double motor_constant, const double moment_constant, const double torque_thrust_constant, const int num_rotors, const double body_radius, const double body_height, const std::vector<int> rotor_dirs,
       const boost::optional<Pose3>& body_P_sensor = boost::none,
       const bool use2ndOrderCoriolis = false);
 

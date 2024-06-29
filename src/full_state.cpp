@@ -170,7 +170,8 @@ FullState FullState::retract(const Vector12&          xi,  //
         // Then we make use of the identity nRc' * nRb = bRc'
         nRc.transpose() * D_t_nRb, bRc.transpose(), Z_3x3, Z_3x3,
         // Similar reasoning for v:
-        nRc.transpose() * D_v_nRb, Z_3x3, bRc.transpose(), Z_3x3, nRc.transpose() * D_w_nRb, Z_3x3, Z_3x3, bRc.transpose();
+        nRc.transpose() * D_v_nRb, Z_3x3, bRc.transpose(), Z_3x3, 
+        nRc.transpose() * D_w_nRb, Z_3x3, Z_3x3, bRc.transpose();
     /* Z_3x3, Z_3x3, Z_3x3, bRc.transpose(); */
   }
   if (H2) {

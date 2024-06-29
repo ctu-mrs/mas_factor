@@ -56,7 +56,7 @@ void PreintegratedMasMeasurements::integrateMeasurement(const Vector& measuredMa
     Vector3 motor_thrust = p.motorConstant * std::pow(measuredMas(i), 2) * Vector3(0, 0, 1);  // body frame
     measuredForce += motor_thrust;
     measuredTorqueDrag += p.rotorDirs[i] * p.momentConstant * motor_thrust;  // body frame, causes yaw
-    measuredTorqueThrust += rotor_p[i].cross(motor_thrust);                    // causes roll/pitch
+    measuredTorqueThrust += p.torqueThrustConstant * rotor_p[i].cross(motor_thrust);                    // causes roll/pitch
   }
 
   measuredAcc   = measuredForce / p.mass;
@@ -159,7 +159,7 @@ void PreintegratedMasMeasurements::mergeWith(const PreintegratedMasMeasurements&
 #ifdef GTSAM_ALLOW_DEPRECATED_SINCE_V4
 PreintegratedMasMeasurements::PreintegratedMasMeasurements(const mas_bias::ConstantBias& biasHat, const Matrix3& measuredAccCovariance,
                                                                          const Matrix3& measuredOmegaCovariance, const Matrix3& integrationErrorCovariance,
-                                                                         const double mass, const double motorConstant, const double momentConstant,
+                                                                         const double mass, const double motorConstant, const double momentConstant, const double torqueThrustConstant,
                                                                          const int numRotors, const double bodyRadius, const double bodyHeight,
                                                                          const std::vector<int> rotorDirs, const bool use2ndOrderIntegration) {
   if (!use2ndOrderIntegration)
@@ -172,6 +172,7 @@ PreintegratedMasMeasurements::PreintegratedMasMeasurements(const mas_bias::Const
   p->mass                               = mass;
   p->motorConstant                     = motorConstant;
   p->momentConstant                    = momentConstant;
+  p->torqueThrustConstant              = torqueThrustConstant;
   p->numRotors                         = numRotors;
   p->bodyRadius                        = bodyRadius;
   p->bodyHeight                        = bodyHeight;
@@ -309,7 +310,7 @@ MasFactor::shared_ptr MasFactor::Merge(const shared_ptr& f01, const shared_ptr& 
 #ifdef GTSAM_ALLOW_DEPRECATED_SINCE_V4
 MasFactor::MasFactor(Key pose_i, Key lin_vel_i, Key ang_vel_i, Key pose_j, Key lin_vel_j, Key ang_vel_j, Key bias,
                                    const PreintegratedMasMeasurements& pim, const Vector3& n_gravity, const Vector3& omegaCoriolis, const double mass,
-                                   const double motorConstant, const double momentConstant, const int numRotors, const double bodyRadius,
+                                   const double motorConstant, const double momentConstant, const double torqueThrustConstant, const int numRotors, const double bodyRadius,
                                    const double bodyHeight, const std::vector<int> rotorDirs, const boost::optional<Pose3>& body_P_sensor,
                                    const bool use2ndOrderCoriolis)
     : Base(noiseModel::Gaussian::Covariance(pim.preintMeasCov_), pose_i, lin_vel_i, ang_vel_i, pose_j, lin_vel_j, ang_vel_j, bias), _PIM_(pim) {
@@ -321,6 +322,7 @@ MasFactor::MasFactor(Key pose_i, Key lin_vel_i, Key ang_vel_i, Key pose_j, Key l
   p->mass                               = mass;
   p->motorConstant                     = motorConstant;
   p->momentConstant                    = momentConstant;
+  p->torqueThrustConstant              = torqueThrustConstant;
   p->numRotors                         = numRotors;
   p->bodyRadius                        = bodyRadius;
   p->bodyHeight                        = bodyHeight;
