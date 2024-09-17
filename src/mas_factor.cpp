@@ -78,13 +78,13 @@ void PreintegratedMasMeasurements::integrateMeasurement(const Vector& measuredMa
     }
   }
 
-  if (measuredAlpha.norm() > 10) {
-    std:: cout << "measuredMas: " << std::endl << measuredMas << std::endl;
-    std:: cout << "measured_alpha: " << std::endl << measuredAlpha << std::endl;
-    std:: cout << "last_alpha: " << std::endl << last_alpha_ << std::endl;
-    std:: cout << "measured_acc: " << std::endl << measuredAcc << std::endl;
-    std:: cout << "last_acc_: " << std::endl << last_acc_ << std::endl;
-  }
+  /* if (measuredAlpha.norm() > 10) { */
+  /*   std:: cout << "measuredMas: " << std::endl << measuredMas << std::endl; */
+  /*   std:: cout << "measured_alpha: " << std::endl << measuredAlpha << std::endl; */
+  /*   std:: cout << "last_alpha: " << std::endl << last_alpha_ << std::endl; */
+  /*   std:: cout << "measured_acc: " << std::endl << measuredAcc << std::endl; */
+  /*   std:: cout << "last_acc_: " << std::endl << last_acc_ << std::endl; */
+  /* } */
 
   last_acc_      = measuredAcc;
   last_acc_norm_ = measuredAcc.norm();
