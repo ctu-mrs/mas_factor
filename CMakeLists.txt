@@ -50,11 +50,6 @@ link_directories(
 ## Build ##
 ###########
 
-include_directories(
-  include
-  )
-
-
 # Mas Factor
 add_library(MasFactor src/mas_factor.cpp src/mas_preintegration.cpp src/mas_preintegration_base.cpp src/full_state.cpp src/mas_bias.cpp)
 add_dependencies(MasFactor
