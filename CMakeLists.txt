@@ -8,10 +8,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   geometry_msgs
-  GTSAM
   )
 
 find_package(GTSAM REQUIRED)
+find_package(Boost REQUIRED COMPONENTS program_options)
 
 set(LIBRARIES
   MasFactor
@@ -19,7 +19,7 @@ set(LIBRARIES
 
 catkin_package(
   INCLUDE_DIRS include
-  # DEPENDS GTSAM
+  DEPENDS GTSAM Boost
 
   CATKIN_DEPENDS
   geometry_msgs
@@ -29,7 +29,7 @@ catkin_package(
 
 # add definitions
 add_definitions(
-  # ${GTSAM_DEFINITIONS}
+  ${GTSAM_DEFINITIONS}
   )
 
 # include directories
@@ -37,6 +37,7 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   ${GTSAM_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIRS}
   )
 
 # link directories
