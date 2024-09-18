@@ -8,6 +8,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   geometry_msgs
+  GTSAM
   )
 
 find_package(GTSAM REQUIRED)
@@ -18,7 +19,7 @@ set(LIBRARIES
 
 catkin_package(
   INCLUDE_DIRS include
-  DEPENDS GTSAM
+  # DEPENDS GTSAM
 
   CATKIN_DEPENDS
   geometry_msgs
@@ -28,7 +29,7 @@ catkin_package(
 
 # add definitions
 add_definitions(
-  ${GTSAM_DEFINITIONS}
+  # ${GTSAM_DEFINITIONS}
   )
 
 # include directories
