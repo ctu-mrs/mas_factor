@@ -16,6 +16,6 @@
 
   <depend>geometry_msgs</depend>
 
-  <depend>GTSAM</depend>
+  <depend>gtsam</depend>
 
 </package>
