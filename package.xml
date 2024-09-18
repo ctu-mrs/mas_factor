@@ -17,6 +17,5 @@
   <depend>geometry_msgs</depend>
 
   <depend>gtsam</depend>
-  <depend>boost</depend>
 
 </package>

@@ -11,10 +11,6 @@ find_package(catkin REQUIRED COMPONENTS
   )
 
 find_package(GTSAM REQUIRED)
-find_package(Boost REQUIRED COMPONENTS program_options)
-find_package(Eigen3 REQUIRED)
-set(Eigen_INCLUDE_DIRS ${EIGEN3_INCLUDE_DIRS})
-set(Eigen_LIBRARIES ${EIGEN3_LIBRARIES})
 
 set(LIBRARIES
   MasFactor
@@ -22,7 +18,7 @@ set(LIBRARIES
 
 catkin_package(
   INCLUDE_DIRS include
-  DEPENDS GTSAM Boost Eigen
+  DEPENDS GTSAM
 
   CATKIN_DEPENDS
   geometry_msgs
@@ -40,8 +36,6 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   ${GTSAM_INCLUDE_DIRS}
-  ${Boost_INCLUDE_DIRS}
-  ${Eigen_INCLUDE_DIRS}
   )
 
 # link directories
@@ -64,7 +58,6 @@ add_dependencies(MasFactor
 target_link_libraries(MasFactor
   ${catkin_LIBRARIES}
   ${GTSAM_LIBRARIES}
-  ${Eigen_LIBRARIES}
   gtsam
   )
 
