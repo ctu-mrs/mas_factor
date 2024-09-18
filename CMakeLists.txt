@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 find_package(GTSAM REQUIRED)
 find_package(Boost REQUIRED COMPONENTS program_options)
+find_package(Eigen3 REQUIRED)
 
 set(LIBRARIES
   MasFactor
